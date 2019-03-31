@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 The Bitcoin Core developers
+// Copyright (c) 2012-2017 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -25,16 +25,16 @@
 BOOST_FIXTURE_TEST_SUITE(compress_tests, BasicTestingSetup)
 
 bool static TestEncode(uint64_t in) {
-    return in == DecompressAmount(CompressAmount(in));
+    return in == CTxOutCompressor::DecompressAmount(CTxOutCompressor::CompressAmount(in));
 }
 
 bool static TestDecode(uint64_t in) {
-    return in == CompressAmount(DecompressAmount(in));
+    return in == CTxOutCompressor::CompressAmount(CTxOutCompressor::DecompressAmount(in));
 }
 
 bool static TestPair(uint64_t dec, uint64_t enc) {
-    return CompressAmount(dec) == enc &&
-           DecompressAmount(enc) == dec;
+    return CTxOutCompressor::CompressAmount(dec) == enc &&
+           CTxOutCompressor::DecompressAmount(enc) == dec;
 }
 
 BOOST_AUTO_TEST_CASE(compress_amounts)
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(compress_amounts)
     BOOST_CHECK(TestPair(         CENT,       0x7));
     BOOST_CHECK(TestPair(         COIN,       0x9));
     BOOST_CHECK(TestPair(      50*COIN,      0x32));
-    BOOST_CHECK(TestPair(84000000*COIN, 0x501BD00));
+    BOOST_CHECK(TestPair(99000000*COIN, 0x501BD00));
 
     for (uint64_t i = 1; i <= NUM_MULTIPLES_UNIT; i++)
         BOOST_CHECK(TestEncode(i));
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(compress_amounts)
         BOOST_CHECK(TestEncode(i * COIN));
 
     for (uint64_t i = 1; i <= NUM_MULTIPLES_50BTC; i++)
-        BOOST_CHECK(TestEncode(i * 50 * COIN));
+        BOOST_CHECK(TestEncode(i * 27 * COIN));
 
     for (uint64_t i = 0; i < 100000; i++)
         BOOST_CHECK(TestDecode(i));
